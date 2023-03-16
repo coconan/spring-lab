@@ -1,5 +1,6 @@
 package me.coconan.mini.spring;
 
+import me.coconan.mini.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
