@@ -4,10 +4,10 @@ import me.coconan.mini.spring.core.Resource;
 import org.dom4j.Element;
 
 public class XmlBeanDefinitionReader {
-    private final BeanFactory beanFactory;
+    private final SimpleBeanFactory simpleBeanFactory;
 
-    public XmlBeanDefinitionReader(BeanFactory beanFactory) {
-        this.beanFactory = beanFactory;
+    public XmlBeanDefinitionReader(SimpleBeanFactory simpleBeanFactory) {
+        this.simpleBeanFactory = simpleBeanFactory;
     }
 
     public void loadBeanDefinition(Resource resource) {
@@ -16,7 +16,7 @@ public class XmlBeanDefinitionReader {
             String beanId = element.attributeValue("id");
             String beanClassName = element.attributeValue("class");
             BeanDefinition beanDefinition = new BeanDefinition(beanId, beanClassName);
-            beanFactory.registerBeanDefinition(beanDefinition);
+            simpleBeanFactory.registerBeanDefinition(beanDefinition);
         }
     }
 }

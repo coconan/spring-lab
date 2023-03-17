@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class SimpleBeanFactory implements BeanFactory {
-    private final List<BeanDefinition> beanDefinitions = new ArrayList<>();
-    private final List<String> beanNames = new ArrayList<>();
-    private final Map<String, Object> singletons = new HashMap<>();
+public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
+    private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
+    public SimpleBeanFactory() {
+    }
 
     @Override
     public Object getBean(String beanName) throws NoSuchBeanDefinitionException {
-        Object singleton = singletons.get(beanName);
+        Object singleton = getSingleton(beanName);
         if (singleton != null) {
             return singleton;
         }
@@ -22,9 +23,10 @@ public class SimpleBeanFactory implements BeanFactory {
             throw new NoSuchBeanDefinitionException();
         }
 
-        BeanDefinition beanDefinition = beanDefinitions.get(index);
+        BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
         try {
             singleton = Class.forName(beanDefinition.getClassName()).newInstance();
+            registerSingleton(beanName, singleton);
         } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -33,8 +35,16 @@ public class SimpleBeanFactory implements BeanFactory {
     }
 
     @Override
+    public boolean containsBean(String beanName) {
+        return containsSingleton(beanName);
+    }
+
+    @Override
+    public void registerBean(String beanName, Object object) {
+        registerSingleton(beanName, object);
+    }
+
     public void registerBeanDefinition(BeanDefinition beanDefinition) {
-        beanDefinitions.add(beanDefinition);
-        beanNames.add(beanDefinition.getId());
+        beanDefinitionMap.put(beanDefinition.getId(), beanDefinition);
     }
 }
