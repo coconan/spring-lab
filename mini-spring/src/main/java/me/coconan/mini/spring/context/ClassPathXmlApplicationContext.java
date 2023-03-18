@@ -4,7 +4,7 @@ import me.coconan.mini.spring.beans.*;
 import me.coconan.mini.spring.core.ClassPathXmlResource;
 import me.coconan.mini.spring.core.Resource;
 
-public class ClassPathXmlApplicationContext implements BeanFactory {
+public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationEventPublisher {
     private BeanFactory beanFactory;
 
     public ClassPathXmlApplicationContext(String fileName) {
@@ -29,5 +29,9 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
     @Override
     public void registerBean(String beanName, Object object) {
         beanFactory.registerBean(beanName, object);
+    }
+
+    @Override
+    public void publishEvent(ApplicationEvent event) {
     }
 }
