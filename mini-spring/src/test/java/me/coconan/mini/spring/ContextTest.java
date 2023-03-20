@@ -13,4 +13,14 @@ public class ContextTest {
 
         assertEquals(FooServiceImpl.class.getName() + " executed", fooService.execute());
     }
+
+    @Test
+    public void test_constructor_injection() throws Exception {
+        ClassPathXmlApplicationContext context =
+                new ClassPathXmlApplicationContext("constructor-injection-beans.xml");
+        ConstructorInjectionBean constructorInjectionBean = (ConstructorInjectionBean) context.getBean("constructorInjectionBean");
+
+        assertEquals("blah", constructorInjectionBean.getMessage());
+        assertEquals(42, constructorInjectionBean.getSecret());
+    }
 }

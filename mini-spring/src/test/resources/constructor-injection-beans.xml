@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans>
+    <bean id="constructorInjectionBean" class="me.coconan.mini.spring.ConstructorInjectionBean">
+        <constructor-arg type="String" name="message" value="blah" />
+        <constructor-arg type="int" name="secret" value="42" />
+    </bean>
+</beans>
