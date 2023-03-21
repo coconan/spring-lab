@@ -2,6 +2,7 @@ package me.coconan.mini.spring.beans;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +63,41 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                     throw new RuntimeException(e);
                 }
             }
-            return Class.forName(beanDefinition.getClassName()).newInstance();
+
+            Object bean = Class.forName(beanDefinition.getClassName()).newInstance();
+            PropertyValues propertyValues = beanDefinition.getPropertyValues();
+            if (propertyValues.isEmpty()) {
+                return bean;
+            }
+            for (int i = 0; i < propertyValues.size(); i++) {
+                PropertyValue propertyValue = propertyValues.getIndexedPropertyValue(i);
+                Class<?>[] paramTypes = new Class<?>[1];
+                Object[] paramValues = new Object[1];
+                if ("String".equals(propertyValue.getType()) || "java.lang.String".equals(propertyValue.getType())) {
+                    paramTypes[0] = String.class;
+                    paramValues[0] = propertyValue.getValue().toString();
+                } else if ("Integer".equals(propertyValue.getType()) || "java.lang.Integer".equals(propertyValue.getType())) {
+                    paramTypes[0] = Integer.class;
+                    paramValues[0] = Integer.valueOf(propertyValue.getValue().toString());
+                } else if ("int".equals(propertyValue.getType())) {
+                    paramTypes[0] = int.class;
+                    paramValues[0] = Integer.valueOf(propertyValue.getValue().toString());
+                } else {
+                    paramTypes[0] = String.class;
+                    paramValues[0] = propertyValue.getValue().toString();
+                }
+
+                String propertyName = propertyValue.getName();
+                String methodName = String.format("set%s%s", propertyName.substring(0, 1).toUpperCase(), propertyName.substring(1));
+                try {
+                    Method method = clz.getMethod(methodName, paramTypes);
+                    method.invoke(bean, paramValues);
+                } catch (NoSuchMethodException | InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            return bean;
         } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }

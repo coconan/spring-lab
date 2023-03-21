@@ -1,4 +1,4 @@
-package me.coconan.mini.spring;
+package me.coconan.mini.spring.misc;
 
 public class FooServiceImpl implements FooService {
     @Override

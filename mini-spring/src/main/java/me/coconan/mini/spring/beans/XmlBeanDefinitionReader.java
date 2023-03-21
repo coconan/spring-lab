@@ -27,8 +27,18 @@ public class XmlBeanDefinitionReader {
                 String value = e.attributeValue("value");
                 argumentValues.addArgumentValue(new ArgumentValue(value, type, name));
             }
-
             beanDefinition.setConstructorArgumentValues(argumentValues);
+
+            List<Element> propertyElements = element.elements("property");
+            PropertyValues propertyValues = new PropertyValues();
+            for (Element e : propertyElements) {
+                String type = e.attributeValue("type");
+                String name = e.attributeValue("name");
+                String value = e.attributeValue("value");
+                propertyValues.addPropertyValue(new PropertyValue(value, type, name));
+            }
+            beanDefinition.setPropertyValues(propertyValues);
+
             simpleBeanFactory.registerBeanDefinition(beanDefinition);
         }
     }

@@ -6,6 +6,7 @@ public class BeanDefinition {
     private String id;
     private String className;
     private ArgumentValues constructorArgumentValues;
+    private PropertyValues propertyValues;
 
     public BeanDefinition(String id, String className) {
         this.id = id;
@@ -34,5 +35,13 @@ public class BeanDefinition {
 
     public void setConstructorArgumentValues(ArgumentValues constructorArgumentValues) {
         this.constructorArgumentValues = constructorArgumentValues;
+    }
+
+    public PropertyValues getPropertyValues() {
+        return propertyValues;
+    }
+
+    public void setPropertyValues(PropertyValues propertyValues) {
+        this.propertyValues = propertyValues;
     }
 }

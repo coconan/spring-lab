@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans>
+    <bean id="propertyInjectionBean" class="me.coconan.mini.spring.misc.PropertyInjectionBean">
+        <property type="String" name="message" value="blah" />
+        <property type="int" name="secret" value="42" />
+    </bean>
+</beans>
