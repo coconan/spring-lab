@@ -1,10 +1,7 @@
 package me.coconan.mini.spring;
 
 import me.coconan.mini.spring.context.ClassPathXmlApplicationContext;
-import me.coconan.mini.spring.misc.ConstructorInjectionBean;
-import me.coconan.mini.spring.misc.FooService;
-import me.coconan.mini.spring.misc.FooServiceImpl;
-import me.coconan.mini.spring.misc.PropertyInjectionBean;
+import me.coconan.mini.spring.misc.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,5 +33,18 @@ public class ContextTest {
 
         assertEquals("blah", propertyInjectionBean.getMessage());
         assertEquals(42, propertyInjectionBean.getSecret());
+    }
+
+    @Test
+    public void test_constructor_property_injection_mixed() throws Exception {
+        ClassPathXmlApplicationContext context =
+                new ClassPathXmlApplicationContext("constructor-property-injection-mixed-beans.xml");
+        ConstructorPropertyInjectionMixedBean bean =
+                (ConstructorPropertyInjectionMixedBean) context.getBean("constructorPropertyInjectionMixedBean");
+
+        assertEquals("blah", bean.getMessage());
+        assertEquals(42, bean.getSecret());
+        assertEquals("walle", bean.getName());
+        assertEquals(3, bean.getWeight());
     }
 }

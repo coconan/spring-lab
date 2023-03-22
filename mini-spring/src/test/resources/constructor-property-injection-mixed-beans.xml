@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans>
+    <bean id="constructorPropertyInjectionMixedBean" class="me.coconan.mini.spring.misc.ConstructorPropertyInjectionMixedBean">
+        <constructor-arg type="String" name="message" value="blah" />
+        <constructor-arg type="int" name="secret" value="42" />
+        <property type="String" name="name" value="walle" />
+        <property type="int" name="weight" value="3" />
+    </bean>
+</beans>

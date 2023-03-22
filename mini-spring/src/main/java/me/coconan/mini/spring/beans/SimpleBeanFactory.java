@@ -3,14 +3,11 @@ package me.coconan.mini.spring.beans;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
-    private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
+    private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
     public SimpleBeanFactory() {
     }
 
@@ -36,8 +33,11 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
     private Object createBean(BeanDefinition beanDefinition) {
         try {
             Class<?> clz = Class.forName(beanDefinition.getClassName());
+            Object bean;
             ArgumentValues argumentValues = beanDefinition.getConstructorArgumentValues();
-            if (!argumentValues.isEmpty()) {
+            if (argumentValues.isEmpty()) {
+                bean = clz.newInstance();
+            } else {
                 Class<?>[] paramTypes = new Class<?>[argumentValues.getArgumentCount()];
                 Object[] paramValues = new Object[argumentValues.getArgumentCount()];
                 for (int i = 0; i < argumentValues.getArgumentCount(); i++) {
@@ -58,13 +58,12 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 }
                 try {
                     Constructor<?> constructor = clz.getConstructor(paramTypes);
-                    return constructor.newInstance(paramValues);
+                    bean = constructor.newInstance(paramValues);
                 } catch (NoSuchMethodException | InvocationTargetException e) {
                     throw new RuntimeException(e);
                 }
             }
 
-            Object bean = Class.forName(beanDefinition.getClassName()).newInstance();
             PropertyValues propertyValues = beanDefinition.getPropertyValues();
             if (propertyValues.isEmpty()) {
                 return bean;
