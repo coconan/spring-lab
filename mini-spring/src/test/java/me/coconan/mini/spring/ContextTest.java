@@ -47,4 +47,13 @@ public class ContextTest {
         assertEquals("walle", bean.getName());
         assertEquals(3, bean.getWeight());
     }
+
+    @Test
+    public void test_ref_property_injection_mixed() throws Exception {
+        ClassPathXmlApplicationContext context =
+                new ClassPathXmlApplicationContext("ref-property-injection-beans.xml");
+        DummyService dummyService = (DummyService) context.getBean("dummyService");
+
+        assertEquals("hello", dummyService.execute());
+    }
 }

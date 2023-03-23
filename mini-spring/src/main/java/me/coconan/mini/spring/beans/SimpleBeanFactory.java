@@ -18,6 +18,11 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
             return singleton;
         }
 
+        singleton = earlySingletons.get(beanName);
+        if (singleton != null) {
+            return singleton;
+        }
+
         int index = beanName.indexOf(beanName);
         if (index == -1) {
             throw new NoSuchBeanDefinitionException();
@@ -33,45 +38,66 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
     private Object createBean(BeanDefinition beanDefinition) {
         try {
             Class<?> clz = Class.forName(beanDefinition.getClassName());
-            Object bean;
             ArgumentValues argumentValues = beanDefinition.getConstructorArgumentValues();
-            if (argumentValues.isEmpty()) {
-                bean = clz.newInstance();
-            } else {
-                Class<?>[] paramTypes = new Class<?>[argumentValues.getArgumentCount()];
-                Object[] paramValues = new Object[argumentValues.getArgumentCount()];
-                for (int i = 0; i < argumentValues.getArgumentCount(); i++) {
-                    ArgumentValue argumentValue = argumentValues.getIndexedArgumentValue(i);
-                    if ("String".equals(argumentValue.getType()) || "java.lang.String".equals(argumentValue.getType())) {
-                        paramTypes[i] = String.class;
-                        paramValues[i] = argumentValue.getValue();
-                    } else if ("Integer".equals(argumentValue.getType()) || "java.lang.Integer".equals(argumentValue.getType())) {
-                        paramTypes[i] = Integer.class;
-                        paramValues[i] = Integer.valueOf(argumentValue.getValue().toString());
-                    } else if ("int".equals(argumentValue.getType())) {
-                        paramTypes[i] = int.class;
-                        paramValues[i] = Integer.valueOf(argumentValue.getValue().toString());
-                    } else {
-                        paramTypes[i] = String.class;
-                        paramValues[i] = argumentValue.getValue();
-                    }
-                }
-                try {
-                    Constructor<?> constructor = clz.getConstructor(paramTypes);
-                    bean = constructor.newInstance(paramValues);
-                } catch (NoSuchMethodException | InvocationTargetException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            Object bean = doCreateBean(argumentValues, clz);
+            earlySingletons.put(beanDefinition.getId(), bean);
 
             PropertyValues propertyValues = beanDefinition.getPropertyValues();
             if (propertyValues.isEmpty()) {
                 return bean;
             }
-            for (int i = 0; i < propertyValues.size(); i++) {
-                PropertyValue propertyValue = propertyValues.getIndexedPropertyValue(i);
-                Class<?>[] paramTypes = new Class<?>[1];
-                Object[] paramValues = new Object[1];
+            handleProperties(clz, bean, propertyValues);
+
+            return bean;
+        } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Object doCreateBean(ArgumentValues argumentValues, Class<?> clz) throws InstantiationException, IllegalAccessException {
+        if (argumentValues.isEmpty()) {
+            return clz.newInstance();
+        }
+
+        Class<?>[] paramTypes = new Class<?>[argumentValues.getArgumentCount()];
+        Object[] paramValues = new Object[argumentValues.getArgumentCount()];
+        for (int i = 0; i < argumentValues.getArgumentCount(); i++) {
+            ArgumentValue argumentValue = argumentValues.getIndexedArgumentValue(i);
+            if ("String".equals(argumentValue.getType()) || "java.lang.String".equals(argumentValue.getType())) {
+                paramTypes[i] = String.class;
+                paramValues[i] = argumentValue.getValue();
+            } else if ("Integer".equals(argumentValue.getType()) || "java.lang.Integer".equals(argumentValue.getType())) {
+                paramTypes[i] = Integer.class;
+                paramValues[i] = Integer.valueOf(argumentValue.getValue().toString());
+            } else if ("int".equals(argumentValue.getType())) {
+                paramTypes[i] = int.class;
+                paramValues[i] = Integer.valueOf(argumentValue.getValue().toString());
+            } else {
+                paramTypes[i] = String.class;
+                paramValues[i] = argumentValue.getValue();
+            }
+        }
+        try {
+            Constructor<?> constructor = clz.getConstructor(paramTypes);
+            return constructor.newInstance(paramValues);
+        } catch (NoSuchMethodException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void handleProperties(Class<?> clz, Object bean, PropertyValues propertyValues) throws IllegalAccessException {
+        for (int i = 0; i < propertyValues.size(); i++) {
+            PropertyValue propertyValue = propertyValues.getIndexedPropertyValue(i);
+            Class<?>[] paramTypes = new Class<?>[1];
+            Object[] paramValues = new Object[1];
+            if (propertyValue.isRef()) {
+                try {
+                    paramTypes[0] = Class.forName(propertyValue.getType());
+                    paramValues[0] = getBean((String) propertyValue.getValue());
+                } catch (ClassNotFoundException | NoSuchBeanDefinitionException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
                 if ("String".equals(propertyValue.getType()) || "java.lang.String".equals(propertyValue.getType())) {
                     paramTypes[0] = String.class;
                     paramValues[0] = propertyValue.getValue().toString();
@@ -85,20 +111,16 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                     paramTypes[0] = String.class;
                     paramValues[0] = propertyValue.getValue().toString();
                 }
-
-                String propertyName = propertyValue.getName();
-                String methodName = String.format("set%s%s", propertyName.substring(0, 1).toUpperCase(), propertyName.substring(1));
-                try {
-                    Method method = clz.getMethod(methodName, paramTypes);
-                    method.invoke(bean, paramValues);
-                } catch (NoSuchMethodException | InvocationTargetException e) {
-                    throw new RuntimeException(e);
-                }
             }
 
-            return bean;
-        } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            String propertyName = propertyValue.getName();
+            String methodName = String.format("set%s%s", propertyName.substring(0, 1).toUpperCase(), propertyName.substring(1));
+            try {
+                Method method = clz.getMethod(methodName, paramTypes);
+                method.invoke(bean, paramValues);
+            } catch (NoSuchMethodException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

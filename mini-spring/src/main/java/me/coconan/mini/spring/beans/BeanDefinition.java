@@ -7,6 +7,7 @@ public class BeanDefinition {
     private String className;
     private ArgumentValues constructorArgumentValues;
     private PropertyValues propertyValues;
+    private String[] dependsOn;
 
     public BeanDefinition(String id, String className) {
         this.id = id;
@@ -43,5 +44,9 @@ public class BeanDefinition {
 
     public void setPropertyValues(PropertyValues propertyValues) {
         this.propertyValues = propertyValues;
+    }
+
+    public void setDependsOn(String[] dependsOn) {
+        this.dependsOn = dependsOn;
     }
 }

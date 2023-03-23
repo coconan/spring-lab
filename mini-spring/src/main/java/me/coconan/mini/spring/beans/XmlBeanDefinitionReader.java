@@ -3,6 +3,7 @@ package me.coconan.mini.spring.beans;
 import me.coconan.mini.spring.core.Resource;
 import org.dom4j.Element;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class XmlBeanDefinitionReader {
@@ -31,14 +32,22 @@ public class XmlBeanDefinitionReader {
 
             List<Element> propertyElements = element.elements("property");
             PropertyValues propertyValues = new PropertyValues();
+            List<String> refs = new ArrayList<>();
             for (Element e : propertyElements) {
                 String type = e.attributeValue("type");
                 String name = e.attributeValue("name");
                 String value = e.attributeValue("value");
-                propertyValues.addPropertyValue(new PropertyValue(value, type, name));
+                String ref = e.attributeValue("ref");
+                boolean isRef = false;
+                if (ref != null && !ref.isEmpty()) {
+                    isRef = true;
+                    value = ref;
+                    refs.add(ref);
+                }
+                propertyValues.addPropertyValue(new PropertyValue(value, type, name, isRef));
             }
             beanDefinition.setPropertyValues(propertyValues);
-
+            beanDefinition.setDependsOn(refs.toArray(new String[]{}));
             simpleBeanFactory.registerBeanDefinition(beanDefinition);
         }
     }

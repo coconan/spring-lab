@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans>
+    <bean id="barService" class="me.coconan.mini.spring.misc.BarService">
+        <property type="me.coconan.mini.spring.misc.DummyService" name="dummyService" ref="dummyService" />
+    </bean>
+    <bean id="dummyService" class="me.coconan.mini.spring.misc.DummyServiceImpl">
+        <constructor-arg type="String" name="message" value="blah" />
+        <constructor-arg type="int" name="secret" value="42" />
+        <property type="String" name="name" value="walle" />
+        <property type="int" name="weight" value="3" />
+        <property type="me.coconan.mini.spring.misc.BazService" name="bazService" ref="bazService" />
+    </bean>
+    <bean id="bazService" class="me.coconan.mini.spring.misc.BazService">
+        <property type="me.coconan.mini.spring.misc.BarService" name="barService" ref="barService" />
+    </bean>
+</beans>
