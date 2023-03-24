@@ -23,12 +23,10 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
             return singleton;
         }
 
-        int index = beanName.indexOf(beanName);
-        if (index == -1) {
+        BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
+        if (beanDefinition == null) {
             throw new NoSuchBeanDefinitionException();
         }
-
-        BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
         singleton = createBean(beanDefinition);
         registerSingleton(beanName, singleton);
 
@@ -136,5 +134,15 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
 
     public void registerBeanDefinition(BeanDefinition beanDefinition) {
         beanDefinitionMap.put(beanDefinition.getId(), beanDefinition);
+    }
+
+    public void refresh() {
+        for (String beanName : beanNames) {
+            try {
+                getBean(beanName);
+            } catch (NoSuchBeanDefinitionException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

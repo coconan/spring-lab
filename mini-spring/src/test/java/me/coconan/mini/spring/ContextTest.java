@@ -49,7 +49,7 @@ public class ContextTest {
     }
 
     @Test
-    public void test_ref_property_injection_mixed() throws Exception {
+    public void test_ref_property_injection_cyclic_dependency() throws Exception {
         ClassPathXmlApplicationContext context =
                 new ClassPathXmlApplicationContext("ref-property-injection-beans.xml");
         DummyService dummyService = (DummyService) context.getBean("dummyService");

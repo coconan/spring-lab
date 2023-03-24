@@ -8,11 +8,17 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
     private BeanFactory beanFactory;
 
     public ClassPathXmlApplicationContext(String fileName) {
+        this(fileName, true);
+    }
+
+    public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
         SimpleBeanFactory simpleBeanFactory = new SimpleBeanFactory();
         Resource resource = new ClassPathXmlResource(fileName);
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(simpleBeanFactory);
         reader.loadBeanDefinition(resource);
-
+        if (isRefresh) {
+            simpleBeanFactory.refresh();
+        }
         beanFactory = simpleBeanFactory;
     }
 
