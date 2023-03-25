@@ -1,6 +1,8 @@
 package me.coconan.mini.spring.context;
 
 import me.coconan.mini.spring.beans.*;
+import me.coconan.mini.spring.beans.factory.support.SimpleBeanFactory;
+import me.coconan.mini.spring.beans.factory.xml.XmlBeanDefinitionReader;
 import me.coconan.mini.spring.core.ClassPathXmlResource;
 import me.coconan.mini.spring.core.Resource;
 

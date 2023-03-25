@@ -1,5 +1,7 @@
 package me.coconan.mini.spring.beans;
 
+import me.coconan.mini.spring.beans.factory.config.ArgumentValues;
+
 public class BeanDefinition {
     public static final String SCOPE_SINGLETON = "singleton";
     public static final String SCOPE_PROTOTYPE = "prototype";

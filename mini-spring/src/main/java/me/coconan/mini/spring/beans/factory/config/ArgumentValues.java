@@ -1,4 +1,6 @@
-package me.coconan.mini.spring.beans;
+package me.coconan.mini.spring.beans.factory.config;
+
+import me.coconan.mini.spring.beans.factory.config.ArgumentValue;
 
 import java.util.*;
 

@@ -1,5 +1,9 @@
-package me.coconan.mini.spring.beans;
+package me.coconan.mini.spring.beans.factory.xml;
 
+import me.coconan.mini.spring.beans.*;
+import me.coconan.mini.spring.beans.factory.config.ArgumentValue;
+import me.coconan.mini.spring.beans.factory.config.ArgumentValues;
+import me.coconan.mini.spring.beans.factory.support.SimpleBeanFactory;
 import me.coconan.mini.spring.core.Resource;
 import org.dom4j.Element;
 

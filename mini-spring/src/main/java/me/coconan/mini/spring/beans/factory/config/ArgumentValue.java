@@ -1,4 +1,4 @@
-package me.coconan.mini.spring.beans;
+package me.coconan.mini.spring.beans.factory.config;
 
 public class ArgumentValue {
     private Object value;

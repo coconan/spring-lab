@@ -1,4 +1,6 @@
-package me.coconan.mini.spring.beans;
+package me.coconan.mini.spring.beans.factory.support;
+
+import me.coconan.mini.spring.beans.factory.config.SingletonBeanRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
