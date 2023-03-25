@@ -1,5 +1,6 @@
-package me.coconan.mini.spring.beans;
+package me.coconan.mini.spring.beans.factory.config;
 
+import me.coconan.mini.spring.beans.PropertyValues;
 import me.coconan.mini.spring.beans.factory.config.ArgumentValues;
 
 public class BeanDefinition {

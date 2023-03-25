@@ -3,6 +3,7 @@ package me.coconan.mini.spring.beans.factory.support;
 import me.coconan.mini.spring.beans.*;
 import me.coconan.mini.spring.beans.factory.config.ArgumentValue;
 import me.coconan.mini.spring.beans.factory.config.ArgumentValues;
+import me.coconan.mini.spring.beans.factory.config.BeanDefinition;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
